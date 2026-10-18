@@ -33,6 +33,7 @@ export default function ProductEditor({ product, onSaved }) {
         nameAr: p.nameAr,
         description: p.description,
         active: p.active,
+        defaultColor: p.defaultColor,
         colors: p.colors.map(({ name, hex, image, available }) => ({ name, hex, image, available: available !== false })),
       });
       setP(saved);
@@ -55,6 +56,13 @@ export default function ProductEditor({ product, onSaved }) {
           <input className={field} dir="ltr" value={p.name} onChange={(e) => set("name", e.target.value)} />
         </label>
       </div>
+      <label className="block text-sm font-bold">اللون الذي يظهر أولاً للزبون
+        <select className={field} value={p.defaultColor || ""} onChange={(e) => set("defaultColor", e.target.value)}>
+          {p.colors.map((c) => (
+            <option key={c.name} value={c.name}>{c.name}</option>
+          ))}
+        </select>
+      </label>
       <label className="flex items-center gap-2 text-sm font-bold">
         <input type="checkbox" checked={p.active} onChange={(e) => set("active", e.target.checked)} />
         المنتج ظاهر في الموقع

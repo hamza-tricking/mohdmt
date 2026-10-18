@@ -5,7 +5,11 @@ import { fileUrl } from "@/lib/api";
 import { formatDA } from "@/constants/site";
 
 export default function ProductCard({ product, unitPrice, onOrderNow, onAdd }) {
-  const [colorIdx, setColorIdx] = useState(0);
+  // يبدأ بالون الافتراضي الذي يحدده المدير، وإلا الأول
+  const [colorIdx, setColorIdx] = useState(() => {
+    const i = product.colors.findIndex((c) => c.name === product.defaultColor);
+    return i >= 0 ? i : 0;
+  });
   const [added, setAdded] = useState(false);
   const color = product.colors[colorIdx];
 

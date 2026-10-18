@@ -15,6 +15,7 @@ const productSchema = new mongoose.Schema(
     nameAr: { type: String, required: true },
     description: { type: String, default: '' },
     active: { type: Boolean, default: true },
+    defaultColor: { type: String, default: '' }, // اسم اللون الذي يظهر أولاً للزبون
     order: { type: Number, default: 0 },
     colors: [colorSchema],
   },

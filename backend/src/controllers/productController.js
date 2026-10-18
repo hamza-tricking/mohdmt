@@ -1,6 +1,6 @@
 const Product = require('../models/Product');
 
-const EDITABLE = ['name', 'nameAr', 'description', 'active', 'colors'];
+const EDITABLE = ['name', 'nameAr', 'description', 'active', 'colors', 'defaultColor'];
 
 // الزبون يرى الألوان المتوفرة فقط.
 const forPublic = (p) => {
@@ -25,6 +25,7 @@ exports.update = async (req, res) => {
     if (req.body[key] !== undefined) product[key] = req.body[key];
   }
   if (!product.colors.length) return res.status(400).json({ message: 'أضف لوناً واحداً على الأقل' });
+  if (!product.colors.some((c) => c.name === product.defaultColor)) product.defaultColor = product.colors[0].name;
   await product.save();
   res.json(product);
 };

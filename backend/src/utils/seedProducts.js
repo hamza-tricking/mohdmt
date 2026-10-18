@@ -7,6 +7,7 @@ module.exports = [
     description:
       'قطعة ديكورية من الرزين بوجه أنثوي هادئ وخصلات شعر منسدلة بنحت دقيق. تصلح كحامل أقلام أو أدوات مكياج أو كقطعة تزيين للمكتب وغرفة النوم.',
     order: 1,
+    defaultColor: 'وردي',
     colors: [
       { name: 'نحاسي وبيج', hex: '#b9704f', image: '/files/bella-face-1.jpg' },
       { name: 'وردي', hex: '#f06a9b', image: '/files/bella-face-2.jpg' },
@@ -21,6 +22,7 @@ module.exports = [
     description:
       'تمثال نصفي من الرزين لفتاة بشعر متموّج، بتفاصيل ناعمة وألوان متعددة. يضيف لمسة فنية لمساحتك ويُستعمل كحامل أقلام أو مزهرية صغيرة.',
     order: 2,
+    defaultColor: 'أخضر',
     colors: [
       { name: 'وردي', hex: '#f4a3bd', image: '/files/bella-girl-1.jpg' },
       { name: 'وردي وذهبي', hex: '#f2a98f', image: '/files/bella-girl-2.jpg' },
