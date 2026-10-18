@@ -59,6 +59,14 @@ export default function Products({ products, settings, rates, loading, error }) 
     );
   };
 
+  // الضغط على أي خيار يفتح صفحة الطلب مباشرة بالعرض المختار (وتُفرَّغ السلة إن لم تطابقه).
+  const openFor = (next) => {
+    if (pieces > OPTION_LIMIT[next]) setCart([]);
+    setMode(next);
+    setNotice("");
+    setOpen(true);
+  };
+
   const orderNow = (product, color) => {
     add(product, color);
     setOpen(true);
@@ -89,14 +97,14 @@ export default function Products({ products, settings, rates, loading, error }) 
           <div className="mx-auto mb-10 grid max-w-3xl gap-4 sm:grid-cols-2">
             <OptionCard
               active={mode === "single"}
-              onClick={() => changeMode("single")}
+              onClick={() => openFor("single")}
               title="قطعة واحدة"
               price={formatDA(settings.unitPrice)}
               text="بالسعر العادي، اختاري موديلاً ولوناً"
             />
             <OptionCard
               active={mode === "pair"}
-              onClick={() => changeMode("pair")}
+              onClick={() => openFor("pair")}
               title="عرض الزوج (قطعتان)"
               price={formatDA(settings.pairPrice)}
               text={`أي موديلين أو لونين، لكل قطعة لونها · وفّري ${formatDA(savings)}`}
@@ -134,6 +142,8 @@ export default function Products({ products, settings, rates, loading, error }) 
         <Modal title="إتمام الطلب" onClose={close}>
           <CheckoutForm
             items={cart}
+            products={products}
+            onPick={add}
             mode={mode}
             limit={limit}
             settings={settings}

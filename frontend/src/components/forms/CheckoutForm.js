@@ -8,7 +8,7 @@ import { DELIVERY_TYPES, formatDA } from "@/constants/site";
 const field =
   "w-full rounded-xl border border-pink-200 bg-white px-4 py-3 text-base outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200";
 
-export default function CheckoutForm({ items, mode, limit, settings, rates, onQty, onRemove, onOrdered, onClose }) {
+export default function CheckoutForm({ items, products, onPick, mode, limit, settings, rates, onQty, onRemove, onOrdered, onClose }) {
   const [f, setF] = useState({
     customerName: "",
     phone: "",
@@ -52,12 +52,36 @@ export default function CheckoutForm({ items, mode, limit, settings, rates, onQt
 
   if (done) return <Success done={done} settings={settings} onClose={onClose} />;
 
-  if (items.length === 0) {
-    return <p className="py-8 text-center text-neutral-500">السلة فارغة. اختاري منتجاً من القائمة.</p>;
-  }
 
   return (
     <form onSubmit={submit} className="space-y-4">
+      {/* اختيار القطع مباشرة من صفحة الطلب */}
+      {pieces < limit && products?.length > 0 && (
+        <div className="space-y-3 rounded-2xl border-2 border-dashed border-pink-300 p-3">
+          <p className="text-sm font-extrabold">
+            {limit === 1 ? "اختاري الموديل واللون" : `اختاري القطعة ${pieces + 1} من ${limit}: الموديل واللون`}
+          </p>
+          {products.map((p) => (
+            <div key={p._id} className="space-y-1.5">
+              <p className="text-xs font-bold text-neutral-600">{p.nameAr}</p>
+              <div className="flex flex-wrap gap-2">
+                {p.colors.map((c) => (
+                  <button
+                    key={c.name}
+                    type="button"
+                    onClick={() => onPick(p, c)}
+                    className="flex items-center gap-1.5 rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs font-bold hover:border-pink-500"
+                  >
+                    <span className="h-3.5 w-3.5 rounded-full border border-white shadow" style={{ backgroundColor: c.hex }} />
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* السلة */}
       <div className="space-y-2">
         {items.map((it) => (
