@@ -2,8 +2,8 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import Hero from "@/components/sections/Hero";
-import Features from "@/components/sections/Features";
+import Hero, { OfferTicker } from "@/components/sections/Hero";
+import Categories from "@/components/sections/Features";
 import Products from "@/components/sections/Products";
 import useStore from "@/hooks/useStore";
 
@@ -14,7 +14,8 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Hero products={products} settings={settings} />
-        <Features />
+        <OfferTicker settings={settings} />
+        <Categories products={products} />
         <Products products={products} settings={settings} rates={rates} loading={loading} error={error} />
       </main>
       <Footer />
