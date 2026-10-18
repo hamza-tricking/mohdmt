@@ -1,8 +1,9 @@
 import { fileUrl } from "@/lib/api";
+import { defaultColorOf } from "@/lib/product";
 
 // بطاقات الموديلات (تُعرض بصورة كل منتج)، ومثل التصميم المرجعي.
 export default function Categories({ products }) {
-  const tiles = products.map((p) => ({ id: p._id, name: p.nameAr, img: p.colors[0]?.image })).filter((t) => t.img);
+  const tiles = products.map((p) => ({ id: p._id, name: p.nameAr, img: defaultColorOf(p)?.image })).filter((t) => t.img);
   if (tiles.length === 0) return null;
 
   return (

@@ -1,5 +1,6 @@
 import { fileUrl } from "@/lib/api";
 import { formatDA } from "@/constants/site";
+import { defaultColorOf } from "@/lib/product";
 
 const SUNBURST = {
   background:
@@ -7,7 +8,7 @@ const SUNBURST = {
 };
 
 export default function Hero({ products, settings }) {
-  const pics = products.map((p) => p.colors?.[1]?.image || p.colors?.[0]?.image).filter(Boolean);
+  const pics = products.map((p) => defaultColorOf(p)?.image).filter(Boolean);
 
   return (
     <section id="top" className="relative overflow-hidden bg-pink-200">
