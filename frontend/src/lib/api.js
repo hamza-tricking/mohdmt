@@ -23,9 +23,13 @@ async function request(path, { method = "GET", body, auth = false, form } = {}) 
   return data;
 }
 
+// عام
 export const getProducts = () => request("/products");
+export const getSettings = () => request("/settings");
+export const getDeliveryRates = () => request("/delivery-rates");
 export const createOrder = (payload) => request("/orders", { method: "POST", body: payload });
 
+// المدير
 export const login = (email, password) =>
   request("/auth/login", { method: "POST", body: { email, password } });
 export const getMe = () => request("/auth/me", { auth: true });
@@ -35,6 +39,9 @@ export const updateProduct = (id, body) =>
 export const getAdminOrders = () => request("/admin/orders", { auth: true });
 export const updateOrderStatus = (id, status) =>
   request(`/admin/orders/${id}`, { method: "PATCH", body: { status }, auth: true });
+export const saveSettings = (body) => request("/admin/settings", { method: "PUT", body, auth: true });
+export const saveDeliveryRates = (rates) =>
+  request("/admin/delivery-rates", { method: "PUT", body: { rates }, auth: true });
 export const uploadFile = (file) => {
   const form = new FormData();
   form.append("file", file);

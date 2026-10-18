@@ -3,17 +3,19 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
+import Features from "@/components/sections/Features";
 import Products from "@/components/sections/Products";
-import useProducts from "@/hooks/useProducts";
+import useStore from "@/hooks/useStore";
 
 export default function Home() {
-  const { products, loading, error } = useProducts();
+  const { products, settings, rates, loading, error } = useStore();
   return (
     <>
       <Navbar />
       <main className="flex-1">
-        <Hero products={products} />
-        <Products products={products} loading={loading} error={error} />
+        <Hero products={products} settings={settings} />
+        <Features />
+        <Products products={products} settings={settings} rates={rates} loading={loading} error={error} />
       </main>
       <Footer />
     </>

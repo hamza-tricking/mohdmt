@@ -1,9 +1,17 @@
 const Product = require('../models/Product');
 
-const EDITABLE = ['name', 'nameAr', 'description', 'price', 'active', 'colors'];
+const EDITABLE = ['name', 'nameAr', 'description', 'active', 'colors'];
+
+// الزبون يرى الألوان المتوفرة فقط.
+const forPublic = (p) => {
+  const obj = p.toObject();
+  obj.colors = obj.colors.filter((c) => c.available !== false);
+  return obj;
+};
 
 exports.listPublic = async (req, res) => {
-  res.json(await Product.find({ active: true }).sort('order'));
+  const products = await Product.find({ active: true }).sort('order');
+  res.json(products.map(forPublic).filter((p) => p.colors.length > 0));
 };
 
 exports.listAll = async (req, res) => {
@@ -16,7 +24,6 @@ exports.update = async (req, res) => {
   for (const key of EDITABLE) {
     if (req.body[key] !== undefined) product[key] = req.body[key];
   }
-  if (!(Number(product.price) >= 0)) return res.status(400).json({ message: 'السعر غير صالح' });
   if (!product.colors.length) return res.status(400).json({ message: 'أضف لوناً واحداً على الأقل' });
   await product.save();
   res.json(product);

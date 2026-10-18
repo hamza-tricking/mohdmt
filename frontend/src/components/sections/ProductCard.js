@@ -2,40 +2,42 @@
 
 import { useState } from "react";
 import { fileUrl } from "@/lib/api";
-import { formatDA } from "@/constants/site";
 
-export default function ProductCard({ product, onOrder }) {
+export default function ProductCard({ product, onOrderNow, onAdd }) {
   const [colorIdx, setColorIdx] = useState(0);
+  const [added, setAdded] = useState(false);
   const color = product.colors[colorIdx];
 
+  function add() {
+    onAdd(product, color);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  }
+
   return (
-    <article className="flex flex-col overflow-hidden rounded-3xl border border-pink-100 bg-white shadow-sm transition-shadow hover:shadow-xl">
-      <div className="relative aspect-[4/5] bg-pink-50">
+    <article className="group flex flex-col overflow-hidden rounded-[2rem] border border-pink-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-200">
+      <div className="relative aspect-[4/5] overflow-hidden bg-pink-50">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={color.image}
           src={fileUrl(color.image)}
           alt={`${product.nameAr} - ${color.name}`}
-          className="animate-pop h-full w-full object-cover"
+          className="animate-pop h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        <span className="absolute start-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold shadow">
+          {color.name}
+        </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-baseline justify-between gap-2">
-          <h3 className="text-xl font-extrabold">
-            {product.nameAr} <span className="text-sm font-medium text-neutral-400" dir="ltr">— {product.name}</span>
-          </h3>
-          <span className="whitespace-nowrap text-lg font-extrabold text-pink-500">
-            {formatDA(product.price)}
-          </span>
-        </div>
-
+        <h3 className="text-xl font-extrabold">
+          {product.nameAr}{" "}
+          <span className="text-sm font-medium text-neutral-400" dir="ltr">— {product.name}</span>
+        </h3>
         <p className="text-sm leading-7 text-neutral-600">{product.description}</p>
 
         <div>
-          <p className="mb-2 text-sm font-bold">
-            اللون: <span className="font-medium text-neutral-500">{color.name}</span>
-          </p>
+          <p className="mb-2 text-sm font-bold">اختاري اللون</p>
           <div className="flex flex-wrap gap-2.5">
             {product.colors.map((c, i) => (
               <button
@@ -54,13 +56,22 @@ export default function ProductCard({ product, onOrder }) {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => onOrder(product, color)}
-          className="mt-auto rounded-full bg-ink py-3 text-base font-bold text-white transition-colors hover:bg-pink-500"
-        >
-          اطلب الآن
-        </button>
+        <div className="mt-auto grid grid-cols-[1fr_auto] gap-2 pt-1">
+          <button
+            type="button"
+            onClick={() => onOrderNow(product, color)}
+            className="rounded-full bg-ink py-3 text-base font-extrabold text-white transition-colors hover:bg-pink-500"
+          >
+            اطلب الآن
+          </button>
+          <button
+            type="button"
+            onClick={add}
+            className="rounded-full border-2 border-ink px-4 py-3 text-sm font-bold transition-colors hover:bg-pink-100"
+          >
+            {added ? "تمت ✓" : "+ للسلة"}
+          </button>
+        </div>
       </div>
     </article>
   );

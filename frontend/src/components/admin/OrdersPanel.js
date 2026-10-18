@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getAdminOrders, updateOrderStatus } from "@/lib/api";
-import { ORDER_STATUSES, formatDA } from "@/constants/site";
+import { DELIVERY_TYPES, ORDER_STATUSES, formatDA } from "@/constants/site";
 
 export default function OrdersPanel({ onAuthError }) {
   const [orders, setOrders] = useState([]);
@@ -39,13 +39,13 @@ export default function OrdersPanel({ onAuthError }) {
             key={s}
             onClick={() => setFilter(s)}
             className={`rounded-full px-4 py-1.5 text-sm font-bold ${
-              filter === s ? "bg-ink text-white" : "bg-pink-100 text-ink"
+              filter === s ? "bg-ink text-white" : "bg-white"
             }`}
           >
             {s === "all" ? `الكل (${orders.length})` : ORDER_STATUSES[s].label}
           </button>
         ))}
-        <button onClick={load} className="ms-auto rounded-full border border-pink-200 px-4 py-1.5 text-sm font-bold">
+        <button onClick={load} className="ms-auto rounded-full border border-pink-200 bg-white px-4 py-1.5 text-sm font-bold">
           تحديث
         </button>
       </div>
@@ -59,6 +59,7 @@ export default function OrdersPanel({ onAuthError }) {
           <div key={o._id} className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
+                <p className="text-xs font-bold text-pink-500" dir="ltr">{o.orderNumber}</p>
                 <p className="font-extrabold">{o.customerName}</p>
                 <a href={`tel:${o.phone}`} dir="ltr" className="text-sm font-bold text-pink-500">{o.phone}</a>
               </div>
@@ -66,12 +67,24 @@ export default function OrdersPanel({ onAuthError }) {
                 {ORDER_STATUSES[o.status].label}
               </span>
             </div>
+
+            <ul className="mt-3 space-y-0.5 rounded-xl bg-pink-50 px-3 py-2 text-sm">
+              {o.items.map((it, i) => (
+                <li key={i}>
+                  {it.productName} · <b>{it.color}</b> × {it.quantity}
+                </li>
+              ))}
+            </ul>
+
             <p className="mt-2 text-sm text-neutral-600">
-              {o.productName} · {o.color} · ×{o.quantity} · <b>{formatDA(o.total)}</b>
-            </p>
-            <p className="text-sm text-neutral-500">
               {o.wilaya} - {o.commune}{o.address ? ` - ${o.address}` : ""}
             </p>
+            <p className="text-sm text-neutral-600">{DELIVERY_TYPES[o.deliveryType]}</p>
+            <p className="mt-1 text-sm">
+              {o.pieces} قطع: {formatDA(o.subtotal)} + توصيل {formatDA(o.deliveryFee)} ={" "}
+              <b className="text-pink-500">{formatDA(o.total)}</b>
+            </p>
+
             <div className="mt-3 flex items-center justify-between gap-2">
               <span className="text-xs text-neutral-400">{new Date(o.createdAt).toLocaleString("ar-DZ")}</span>
               <select

@@ -8,4 +8,9 @@ export const ORDER_STATUSES = {
   cancelled: { label: "ملغى", cls: "bg-neutral-200 text-neutral-600" },
 };
 
+export const DELIVERY_TYPES = {
+  domicile: "إلى المنزل (Domicile)",
+  stopdesk: "مكتب الاستلام (Stop Desk)",
+};
+
 export const formatDA = (n) => `${Number(n).toLocaleString("en-US")} د.ج`;

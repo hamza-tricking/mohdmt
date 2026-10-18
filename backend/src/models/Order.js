@@ -1,12 +1,27 @@
 const mongoose = require('mongoose');
 
-const orderSchema = new mongoose.Schema(
+const itemSchema = new mongoose.Schema(
   {
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
     productName: { type: String, required: true },
     color: { type: String, required: true },
     quantity: { type: Number, required: true, min: 1, max: 20 },
-    unitPrice: { type: Number, required: true },
+  },
+  { _id: false }
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    orderNumber: { type: String, required: true, unique: true },
+    items: { type: [itemSchema], validate: (v) => v.length > 0 },
+    pieces: { type: Number, required: true },
+    unitPrice: { type: Number, required: true }, // السعر وقت الطلب
+    pairPrice: { type: Number, required: true },
+    pairs: { type: Number, required: true },
+    singles: { type: Number, required: true },
+    subtotal: { type: Number, required: true },
+    deliveryType: { type: String, enum: ['domicile', 'stopdesk'], required: true },
+    deliveryFee: { type: Number, required: true },
     total: { type: Number, required: true },
     customerName: { type: String, required: true, trim: true, maxlength: 80 },
     phone: { type: String, required: true, trim: true },
