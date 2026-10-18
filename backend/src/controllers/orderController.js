@@ -9,7 +9,7 @@ const { calcSubtotal } = require('../utils/pricing');
 const PHONE_RE = /^0[567]\d{8}$/;
 const STATUSES = Order.schema.path('status').enumValues;
 const DELIVERY_TYPES = ['domicile', 'stopdesk'];
-const MAX_PIECES = 40;
+const ALLOWED_PIECES = [1, 2]; // قطعة واحدة أو زوج فقط
 
 const badRequest = (res, message) => res.status(400).json({ message });
 
@@ -34,7 +34,7 @@ exports.create = async (req, res) => {
   let pieces = 0;
   for (const it of rawItems) {
     const quantity = parseInt(it.quantity, 10);
-    if (!(quantity >= 1 && quantity <= 20)) return badRequest(res, 'الكمية غير صالحة');
+    if (!(quantity >= 1 && quantity <= 2)) return badRequest(res, 'الكمية غير صالحة');
     const product = await Product.findOne({ _id: it.productId, active: true });
     if (!product) return badRequest(res, 'منتج غير متوفر');
     const color = product.colors.find((c) => c.name === it.color && c.available !== false);
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
     items.push({ product: product._id, productName: `${product.nameAr} (${product.name})`, color: color.name, quantity });
     pieces += quantity;
   }
-  if (pieces > MAX_PIECES) return badRequest(res, `الحد الأقصى ${MAX_PIECES} قطعة في الطلب الواحد`);
+  if (!ALLOWED_PIECES.includes(pieces)) return badRequest(res, 'يمكن طلب قطعة واحدة بالسعر العادي، أو زوج (قطعتان) بسعر العرض فقط');
 
   // 2) بيانات الزبون.
   const phone = String(b.phone || '').replace(/[\s.-]/g, '');

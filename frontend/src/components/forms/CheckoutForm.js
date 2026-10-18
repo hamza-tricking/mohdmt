@@ -8,7 +8,7 @@ import { DELIVERY_TYPES, formatDA } from "@/constants/site";
 const field =
   "w-full rounded-xl border border-pink-200 bg-white px-4 py-3 text-base outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200";
 
-export default function CheckoutForm({ items, settings, rates, onQty, onRemove, onOrdered, onClose }) {
+export default function CheckoutForm({ items, mode, limit, settings, rates, onQty, onRemove, onOrdered, onClose }) {
   const [f, setF] = useState({
     customerName: "",
     phone: "",
@@ -24,7 +24,9 @@ export default function CheckoutForm({ items, settings, rates, onQty, onRemove, 
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }));
 
   const pieces = items.reduce((n, it) => n + it.quantity, 0);
-  const { pairs, singles, subtotal } = calcSubtotal(pieces, settings);
+  const { subtotal } = calcSubtotal(pieces, settings);
+  const countOk = pieces === limit; // قطعة واحدة للشراء العادي، أو قطعتان للزوج
+  const optionLabel = mode === "pair" ? "عرض الزوج (قطعتان)" : "قطعة واحدة بالسعر العادي";
   const fee = getDeliveryFee(rates, f.wilaya, f.deliveryType); // undefined | null | number
   const feeKnown = typeof fee === "number";
   const total = feeKnown ? subtotal + fee : null;
@@ -35,6 +37,7 @@ export default function CheckoutForm({ items, settings, rates, onQty, onRemove, 
     setBusy(true);
     try {
       const res = await createOrder({
+        mode,
         ...f,
         items: items.map((it) => ({ productId: it.product._id, color: it.color.name, quantity: it.quantity })),
       });
@@ -68,14 +71,14 @@ export default function CheckoutForm({ items, settings, rates, onQty, onRemove, 
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => onQty(it.key, it.quantity - 1)} className="h-8 w-8 rounded-full bg-white text-lg font-bold shadow-sm">−</button>
               <span className="w-5 text-center font-extrabold">{it.quantity}</span>
-              <button type="button" onClick={() => onQty(it.key, it.quantity + 1)} className="h-8 w-8 rounded-full bg-white text-lg font-bold shadow-sm">+</button>
+              <button type="button" disabled={pieces >= limit} onClick={() => onQty(it.key, it.quantity + 1)} className="h-8 w-8 rounded-full bg-white text-lg font-bold shadow-sm disabled:opacity-40">+</button>
             </div>
             <button type="button" onClick={() => onRemove(it.key)} aria-label="حذف" className="px-1 text-xl text-red-400">×</button>
           </div>
         ))}
-        {pieces % 2 === 1 && (
+        {!countOk && (
           <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700">
-            💡 أضيفي قطعة أخرى (أي موديل أو لون) لتحصلي على الزوج بـ{formatDA(settings.pairPrice)} فقط.
+            {limit === 1 ? "الشراء بالسعر العادي يكون لقطعة واحدة فقط." : "عرض الزوج يكون لقطعتين بالضبط."}
           </p>
         )}
       </div>
@@ -144,10 +147,7 @@ export default function CheckoutForm({ items, settings, rates, onQty, onRemove, 
 
       {/* الملخص */}
       <div className="space-y-1.5 rounded-2xl bg-ink p-4 text-sm text-white">
-        {pairs > 0 && (
-          <Row label={`${pairs} × زوج (عرض خاص)`} value={formatDA(pairs * settings.pairPrice)} />
-        )}
-        {singles > 0 && <Row label="1 × قطعة" value={formatDA(settings.unitPrice)} />}
+        <Row label={optionLabel} value={formatDA(subtotal)} />
         <Row label="المجموع الجزئي" value={formatDA(subtotal)} />
         <Row
           label="التوصيل"
@@ -167,7 +167,7 @@ export default function CheckoutForm({ items, settings, rates, onQty, onRemove, 
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
 
       <button
-        disabled={busy || !feeKnown}
+        disabled={busy || !feeKnown || !countOk}
         className="w-full rounded-full bg-pink-500 py-3.5 text-base font-extrabold text-white shadow-lg shadow-pink-200 hover:bg-ink disabled:opacity-50"
       >
         {busy ? "جارٍ الإرسال..." : "تأكيد الطلب"}

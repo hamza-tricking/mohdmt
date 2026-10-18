@@ -1,7 +1,8 @@
-// قاعدة الأسعار: أي قطعتين (من أي موديل أو لون) بسعر الزوج، والقطعة المتبقية بسعر القطعة.
-// مثال: قطعة = 999، زوج = 1600، ثلاث قطع = 1600 + 999 = 2599.
+// خياران فقط للشراء:
+// 1) قطعة واحدة بالسعر العادي (unitPrice).
+// 2) زوج = قطعتان (أي موديلين أو لونين، بنفس المنتج أو مختلفين) بسعر العرض (pairPrice).
 exports.calcSubtotal = (pieces, { unitPrice, pairPrice }) => {
-  const pairs = Math.floor(pieces / 2);
-  const singles = pieces % 2;
-  return { pairs, singles, subtotal: pairs * pairPrice + singles * unitPrice };
+  if (pieces === 1) return { pairs: 0, singles: 1, subtotal: unitPrice };
+  if (pieces === 2) return { pairs: 1, singles: 0, subtotal: pairPrice };
+  return { pairs: 0, singles: 0, subtotal: 0 };
 };

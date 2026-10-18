@@ -1,9 +1,9 @@
 // نفس قاعدة الباك أند (للعرض فقط؛ الحساب الرسمي يتم في السيرفر):
-// أي قطعتين بسعر الزوج، والقطعة المتبقية بسعر القطعة.
+// خياران فقط: قطعة واحدة بالسعر العادي، أو زوج (قطعتان) بسعر العرض.
 export function calcSubtotal(pieces, { unitPrice, pairPrice }) {
-  const pairs = Math.floor(pieces / 2);
-  const singles = pieces % 2;
-  return { pairs, singles, subtotal: pairs * pairPrice + singles * unitPrice };
+  if (pieces === 1) return { pairs: 0, singles: 1, subtotal: unitPrice };
+  if (pieces === 2) return { pairs: 1, singles: 0, subtotal: pairPrice };
+  return { pairs: 0, singles: 0, subtotal: 0 };
 }
 
 // سعر التوصيل من جدول الولايات: رقم، أو null إذا لم يُحدَّد، أو undefined إذا لم تُختَر الولاية.
@@ -12,3 +12,6 @@ export function getDeliveryFee(rates, wilaya, type) {
   if (!rate) return undefined;
   return type === "domicile" ? rate.home : rate.stopDesk;
 }
+
+// عدد القطع المسموح بها لكل خيار شراء.
+export const OPTION_LIMIT = { single: 1, pair: 2 };
