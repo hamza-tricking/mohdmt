@@ -21,11 +21,11 @@ exports.ensureProducts = async () => {
   console.log('Seeded products');
 };
 
-// إعدادات الأسعار: 999 للقطعة و1600 للزوج (تُعدَّل من لوحة التحكم).
+// إعدادات الأسعار: 950 للقطعة و1600 للزوج (تُعدَّل من لوحة التحكم).
 exports.ensureSettings = async () => {
   await Settings.updateOne(
     { key: 'main' },
-    { $setOnInsert: { key: 'main', unitPrice: 999, pairPrice: 1600, whatsappNumber: '' } },
+    { $setOnInsert: { key: 'main', unitPrice: 950, pairPrice: 1600, whatsappNumber: '' } },
     { upsert: true }
   );
 };
